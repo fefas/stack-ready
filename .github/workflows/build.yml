@@ -13,4 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: PHP - build images
-      run: make php version=7.4.7 os=alpine3.12 composer=1.10.8 packages=mysql
+      run: make php version=${{ matrix.php }} os=${{ matrix.os }} composer=${{ matrix.composer }} packages=${{ matrix.packages }}
+    strategy:
+      matrix:
+        os: [alpine3.12]
+        php: [7.3.19, 7.4.7, 8.0-rc]
+        composer: [1.10.8]
+        packages: [mysql, postgres]

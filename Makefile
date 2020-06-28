@@ -18,7 +18,7 @@ push:
 	docker push $(registry)/$(image)
 
 php: extra-tag := composer$(composer)
-php: os-packs := zip,unzip,netcat-openbsd
+php: os-packs := zip,unzip,netcat-openbsd$(if $(filter postgres, $(packs)),$(COMMA)postgresql-dev)
 php: exts-install := $(if $(filter mysql, $(packs)), pdo pdo_mysql)
 php: exts-install += $(if $(filter postgres, $(packs)), pdo pdo_pgsql)
 php: exts-install := $(subst $(SPACE),$(COMMA),$(strip $(exts-install)))
