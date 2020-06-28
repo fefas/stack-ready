@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+set -ue
+
+WAIT_DSN_LIST=${WAIT_DSN_LIST-}
+
+for dsn in $WAIT_DSN_LIST ; do
+    wait-for $dsn
+done
+
+echo "starting with: $@"
+eval $@
