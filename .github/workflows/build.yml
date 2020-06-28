@@ -1,0 +1,16 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: PHP - build images
+      run: make php version=7.4.7 os=alpine3.12 composer=1.10.8 packages=mysql
