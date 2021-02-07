@@ -1,0 +1,35 @@
+#!/usr/bin/env sh
+
+set -eu
+
+# Install basic packages
+apk add --no-cache \
+    $PHPIZE_DEPS \
+    zip \
+    unzip \
+    git \
+    openssh
+
+## Install composer
+COMPOSER_VERSION=$DEP_MANAGER_VERSION
+COMPOSER_CACHE_DIR=/var/cache/composer
+COMPOSER_VENDOR_DIR=/usr/local/composer
+
+curl -sS https://getcomposer.org/installer | php -- \
+    --version=$COMPOSER_VERSION \
+    --install-dir=/usr/local/bin \
+    --filename=composer
+
+mkdir \
+    $COMPOSER_CACHE_DIR \
+    $COMPOSER_VENDOR_DIR
+chown $USER:$USER -R \
+    $COMPOSER_CACHE_DIR \
+    $COMPOSER_VENDOR_DIR
+
+## Install pakcages
+for i in ${INSTALLS//-/ }
+do
+    echo installing $i
+    ./setup/php/install-$i
+done

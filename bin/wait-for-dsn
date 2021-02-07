@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+hostAndPort=$(echo $1 | cut -d '@' -f 2 | cut -d '/' -f 1)
+shift
+
+wait-for $hostAndPort $@

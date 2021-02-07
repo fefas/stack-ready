@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+
+set -eu
+
+CACHE_DIR=/var/cache/app
+TMP_DIR=/var/tmp/app
+
+# Create common dirs
+rm -rf $WORK_DIR/*
+mkdir \
+    $CACHE_DIR \
+    $TMP_DIR
+chown $USER:$USER -R \
+    $WORK_DIR \
+    $CACHE_DIR \
+    $TMP_DIR
+
+## Install wait-for script
+WAIT_FOR_FILE=/usr/local/bin/wait-for
+WAIT_FOR_URL=https://raw.githubusercontent.com/eficode/wait-for/fd4909a3b269d05bd5fe13d0e5d2b9b1bc119323/wait-for
+
+apk add --no-cache \
+    netcat-openbsd
+curl \
+    $WAIT_FOR_URL \
+    -o $WAIT_FOR_FILE
+chmod +x \
+    $WAIT_FOR_FILE

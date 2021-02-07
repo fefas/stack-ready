@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+set -eu
+
+apk --no-cache add \
+    postgresql-libs \
+    postgresql-dev
+
+docker-php-ext-install \
+    pdo \
+    pdo_pgsql

@@ -1,21 +1,23 @@
 ARG VERSION
 ARG OS
+ARG OS_VERSION
 
-FROM php:$VERSION-fpm-$OS
+FROM php:$VERSION-fpm-$OS$OS_VERSION
 
-ARG COMPOSER_VERSION
-ARG OS_PACKS
-ARG EXTS_INSTALL
-ARG INSTALL_DIR=/usr/local/bin/
+ENV USER www-data
+ENV WORK_DIR /var/www
+ARG DEP_MANAGER_VERSION
+ARG INSTALLS
 
-RUN apk add --no-cache $OS_PACKS && \
-    docker-php-ext-install $EXTS_INSTALL && \
-    curl -sS https://getcomposer.org/installer | \
-        php -- \
-        --version=$COMPOSER_VERSION \
-        --install-dir=$INSTALL_DIR \
-        --filename=composer
+COPY ./setup/ /root/setup/
+COPY ./bin/* /usr/local/bin/
 
-COPY ./bin/* $INSTALL_DIR
-WORKDIR /var/www/
+RUN cd /root && \
+    ./setup/common && \
+    ./setup/php/setup && \
+    rm -rf /root/setup
+
+WORKDIR $WORK_DIR
+USER www-data
+
 ENTRYPOINT ["entrypoint"]

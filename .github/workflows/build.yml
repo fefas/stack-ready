@@ -1,22 +1,40 @@
-name: Docker Image CI
-
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+name: Build
+on: push
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: PHP - build images
-      run: make php version=${{ matrix.php }} os=${{ matrix.os }} composer=${{ matrix.composer }} packages=${{ matrix.packages }}
+
     strategy:
       matrix:
-        os: [alpine3.12]
-        php: [7.3.19, 7.4.7, 8.0-rc]
-        composer: [1.10.8]
-        packages: [mysql, postgres]
+        php: [7.4.15, 8.0.2]
+        os: [alpine]
+        osVersion: [3.13]
+        depManagerVersion: [2.0.9]
+        installs: [mysql, postgres]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: PHP - Build
+      run: |
+        make build \
+          lang=php \
+          version=${{ matrix.php }} \
+          os=${{ matrix.os }} \
+          osVersion=${{ matrix.osVersion }} \
+          depManagerVersion=${{ matrix.depManagerVersion }} \
+          installs=${{ matrix.installs }}
+
+    - name: PHP - Publish
+      if: github.ref == 'refs/heads/main'
+      run: |
+        make login registry=ghcr.io username=fefas password=${{ secrets.GHRC_TOKEN }}
+        make publish \
+          registry=ghcr.io \
+          lang=php \
+          version=${{ matrix.php }} \
+          os=${{ matrix.os }} \
+          osVersion=${{ matrix.osVersion }} \
+          depManagerVersion=${{ matrix.depManagerVersion }} \
+          installs=${{ matrix.installs }}
